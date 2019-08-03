@@ -1,4 +1,4 @@
-### C++ Cheat- sheet 
+# C++ Cheat- sheet 
 
 
 **Strings**
@@ -49,6 +49,51 @@ return false;
 ~~~
 
 
+**Looping tips**
+
+* If there is a while loop inside of another while loop, the condition in the first while loop has to be put inside the nested while loop as well. 
+
+~~~
+while(k>0)
+{
+    while(isString(s) && k> 0)
+    {
+
+    }	
+}
+
+
+~~~
+
+* While comparing a counter to the size of say a string, the condition should be less than s.size() and **NOT** <= s.size()
+
+~~~
+int i = 0;
+
+while(i<s.size())
+{
+    // Do something
+    i++; 
+}
+
+
+~~~
+
+
+## Mathematical operations 
+
+
+**Division**
+
+* When dividing two integers, if we want the result to be float, both the integers need to be static_cast<float> separately before the division. 
+
+
+**ceil**
+
+* To find the ceil, use the ceil function from the math.h library 
+~~~
+ceil(2.5) 
+~~~
 
 
 
