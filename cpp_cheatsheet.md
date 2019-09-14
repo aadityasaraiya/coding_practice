@@ -1,5 +1,41 @@
 # C++ Cheat- sheet 
 
+**Vectors**
+
+* Sorting a vector
+
+~~~
+sort(vec.begin(), vec.end());
+~~~
+
+* Passing a vector of lists into a function  
+
+~~~
+void addEdge(vector<int> adj[], int u, int v) 
+{ 
+    adj[u].push_back(v); 
+    adj[v].push_back(u); 
+} 
+~~~
+
+* Size of a vector 
+
+~~~
+std::vector<int>vec;
+vec.size()
+~~~
+
+* Initializing a vector with zeros 
+
+~~~
+vector<int> ans(<size_val>)
+~~~
+
+* Insert element at start of vector 
+
+~~~
+auto it = vec.insert(vec.begin(), 3); 
+~~~
 
 **Strings**
 
@@ -24,6 +60,33 @@ void isLetter(char &singleChar)
 
 return false; 
 }
+~~~
+
+* To check if string is empty 
+
+~~~
+std::string s;
+s.empty(); 
+~~~
+
+* To convert upper-case to lower case
+
+~~~
+s[j]= ::tolower(s[j]);
+~~~
+
+* To convert a character to an integer 
+
+~~~
+char a= '1';
+int ai= a- '0'; 
+~~~
+
+* To find length of string 
+
+~~~
+string s;
+s.length(); 
 ~~~
 
 **Maps** 
@@ -95,5 +158,65 @@ while(i<s.size())
 ceil(2.5) 
 ~~~
 
+**power**
+
+~~~
+pow(a,b)  = a^b
+~~~
+
+**Max and min values of types**
+
+* In cases where you are accumulating integers, the value could go above the max value of int or go below the min value of int. 
+  In such cases, we may have to return INT_MAX or INT_MIN as an output. 
 
 
+## Arrays 
+
+**To fill an array with given value**
+
+~~~
+std::fill_n(dp, 1000, -1);
+~~~
+
+## Structs in C++
+
+* While defining an object of a C++ struct, the struct keyword has to be always used with it 
+
+~~~
+
+struct Node* temp= newNode(5);
+
+~~~ 
+
+
+## new operator 
+
+* The new operator requires the name of a class. It returns a pointer to the object of that class and allocates memory for that object. 
+
+~~~
+struct Node* temp= new Node; 
+
+~~~
+
+## Queues
+
+~~~
+std::queue<int> q;    // To create an empty queue
+~~~
+
+* Add elements to the queue
+~~~
+q.push(s);
+~~~
+
+* Get first element of the queue
+
+~~~
+v= q.front();
+~~~
+
+* Removes first element from the queue  (Note: Keep in mind that this function has a void return type)
+
+~~~
+q.pop();
+~~~
