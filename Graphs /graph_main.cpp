@@ -132,3 +132,15 @@ int main()
     g.DFSMain(2); 
     return 0; 
 }
+
+
+
+/* Notes
+
+1. Post-order traversal - How can I use the information of the left and right sub-tree to get information of the current node I am at. 
+- Termination condition is the root being NULL. 
+
+2. Pre-order traversal- How can I compute some info for this current node and pass it down to leaf. At leaf, the decision is taken by seeing if the 'ans' has changed in any way. 
+- Needs a special if loop for when we are the leaf. 
+
+*/
