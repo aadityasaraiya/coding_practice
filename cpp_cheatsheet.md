@@ -55,6 +55,12 @@ bool exists= (uMap.find("key")!= uMap.end());
 ~~~
 unsigned int count= uMap.count("key")
 ~~~
+
+6. Check if map is empty
+
+~~~
+umap.empty()
+~~~
 ____
 
 **Queues**
@@ -72,6 +78,8 @@ q.push(s);
 
 ~~~
 v= q.front();
+
+Note: This causes undefined behavior if there is the queue is empty. There is no explicit empty check done automatically. 
 ~~~
 
 * Removes first element from the queue  (Note: Keep in mind that this function has a void return type)
@@ -87,9 +95,33 @@ q.pop();
 if(!q.empty())
 ~~
 
+
+
 **Sets**
 
 * Creating a set 
+
+~~~
+
+* Having an unordered set with pairs using a custom hasher 
+
+~~~
+# Unordered set with hashing for pairs 
+struct pair_hash
+{
+	template <class T1, class T2>
+	std::size_t operator () (std::pair<T1, T2> const &pair) const
+	{
+		std::size_t h1 = std::hash<T1>()(pair.first);
+		std::size_t h2 = std::hash<T2>()(pair.second);
+
+		return h1 ^ h2;
+	}
+};
+
+std::unordered_set<std::pair<std::string,int>, pair_hash> set; 
+~~~
+
 
 
 
@@ -262,6 +294,7 @@ while(i<s.size())
 
 * When dividing two integers, if we want the result to be float, both the integers need to be static_cast<float> separately before the division. 
 
+* double/ int = double 
 
 **ceil**
 
@@ -296,7 +329,7 @@ std::fill_n(dp, 1000, -1);
 
 ~~~
 
-struct Node* temp= newNode(5);
+struct Node* temp= new Node(5);
 
 ~~~ 
 
@@ -307,6 +340,8 @@ struct Node* temp= newNode(5);
 
 ~~~
 struct Node* temp= new Node; 
-
 ~~~
 
+## Sorting with custom functions 
+sort(intervals.begin(), intervals.end(),
+        [](const vector<int>&a, const vector<int>& b){return a[0]< b[0]; });
