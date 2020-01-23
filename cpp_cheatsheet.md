@@ -345,3 +345,26 @@ struct Node* temp= new Node;
 ## Sorting with custom functions 
 sort(intervals.begin(), intervals.end(),
         [](const vector<int>&a, const vector<int>& b){return a[0]< b[0]; });
+
+
+
+
+
+
+
+
+
+## Hashing 
+
+* Hashing for vectors as key in unordered_set
+
+    struct VectorHash {
+        size_t operator()(const std::vector<int>& v) const {
+            std::hash<int> hasher;
+            size_t seed = 0;
+            for (int i : v) {
+                seed ^= hasher(i) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+            }
+            return seed;
+        }
+    };   

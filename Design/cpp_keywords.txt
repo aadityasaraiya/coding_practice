@@ -1,0 +1,1 @@
+1) Extern- Utilized for C function declarations. This is a C++ directive which tells the C++ compiler that this code is a C file. 
