@@ -1413,3 +1413,593 @@ public:
         return r;
     }
 };
+
+///////////////////////////////////////////////////////////////////////////////
+// [739] Daily temperatures 
+
+class Solution {
+public:                   
+    vector<int> dailyTemperatures(vector<int>& T) {
+        
+        // By default all answer are set to 0
+        vector<int> res(T.size(), 0);
+        stack<pair<int,int>> s;
+        
+        for(int i=0; i<T.size(); i++)
+        {
+            while(!s.empty() && T[i] > s.top().first)
+            {
+               auto p = s.top();
+               res[p.second] = i - p.second; 
+               s.pop(); 
+            }
+            
+            s.push(make_pair(T(i), i);
+        }
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////
+// [142] Linked List Cycle II (Memory unoptimized)
+
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        // If empty list, return NULL 
+        if(!head) return NULL; 
+        auto fast = head;  auto slow = head;
+        unordered_set<ListNode*> visited; 
+        visited.insert(slow); 
+        
+        while(fast!= NULL && fast->next!= NULL)
+        {
+            fast = fast->next->next;
+            slow = slow->next;
+            // The two pointers have met 
+            if(fast == slow)
+            {
+                // Searching for the first node which slow has already seen
+                while(visited.find(slow) == visited.end())
+                {
+                    visited.insert(slow); 
+                    slow = slow->next;       
+                }
+                return slow; 
+            }
+            visited.insert(slow); 
+        }
+        
+        return NULL; 
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////
+// [141] Linked List Cycle I 
+
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+       auto fast= head; 
+       auto slow = head; 
+        
+        while(fast!= NULL && fast->next!= NULL)
+        {
+            
+            slow = slow->next; 
+            fast = fast->next->next;
+            if(fast == slow) return true; 
+        }
+        
+        return false; 
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+// [160] Intersection of Two Linked Lists 
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        
+        
+        if(!headA || !headB) return NULL; 
+        // Initialize lengths of both to 1 
+        int countA= 0, countB = 0; 
+        // Get count of A and B (shorter one will end first)
+        // As soon as either of them goes NULL, we quit
+        
+        // We will need to know which one is shorter 
+        bool shorterVal = 0; 
+        
+        auto temp=  headA;
+        auto temp2 = headB; 
+        
+        while(temp!=NULL || temp2!=NULL)
+        {
+            
+            if(temp)
+            {
+                temp= temp->next;
+                countA++;
+            }
+            
+            if(temp2)
+            {
+                temp2= temp2->next;
+                countB++;                
+            }
+            
+            if(temp2 == NULL && temp!=NULL) shorterVal = 1;
+        }
+        
+        
+        if(!shorterVal) 
+        {
+            temp = headB;
+            temp2= headA; 
+        }
+        else 
+        {
+            temp = headA;
+            temp2= headB; 
+        }
+        
+        // Start temp from an earlier value 
+        for(int i=0; i<(abs(countA- countB)); i++)
+        {
+            temp= temp->next; 
+        }
+                
+        while(temp!=NULL && temp2!=NULL)
+        {
+            if(temp == temp2) return temp;
+            temp= temp->next; 
+            temp2= temp2->next;
+        }
+        
+        return NULL; 
+    
+    }
+};
+
+//////////////////////////////////////////////////////////
+// [661] Image smoother (O(n^2 * k^2) ) with allowance for arbitrary window size 
+
+class Solution {
+public:
+    
+    vector<vector<int>> imageSmoother(vector<vector<int>>& M) {
+        
+        int numRows = M.size()-1; int numCols = M[0].size()-1; 
+        // Matrix to store answers in 
+        vector<vector<int>> ans(M.size(), vector<int>(M[0].size(), 0));
+        for(int r = 0; r <= numRows; r++)
+        {
+            for(int c = 0; c <= numCols; c++)
+            {
+                // Minimum neighborhood will have 9 elements 
+                int n = 0; 
+                {
+                    for(int dr= -1; dr <=1; dr++)
+                    {
+                        for(int dc = -1; dc <=1; dc++)
+                        {
+                            if(r + dr >=0 && r + dr<= numRows && c + dc >=0 && c + dc<= numCols)
+                            {
+                                ans[r][c]+= M[r+ dr][c+ dc];
+                                n++;
+                            }
+                        }
+                    }
+                }    
+                ans[r][c]= floor((float)(ans[r][c]) / n); 
+            }
+        }
+        
+        return ans; 
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////
+// [303] Range Sum Query- Immutable 
+
+    vector<int> cumSum; 
+    
+    NumArray(vector<int>& nums) {
+        // Create an array which will accumulate cummulative sum 
+        vector<int> temp (nums.size(), 0);
+        if(nums.size()!=0)
+        {
+            temp[0] = nums[0]; 
+            // Perform cumulative sum in a 1D manner 
+            for(int i=1; i< nums.size(); i++)
+            {
+                temp[i] = nums[i]+ temp[i-1]; 
+            }
+            // Assign temp to the public cumSum 
+            cumSum = temp; 
+        }
+    }
+    
+    int sumRange(int i, int j) {
+        
+        if(i == 0) return cumSum[j];
+        else return cumSum[j]- cumSum[i-1];
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+// [304] Range Sum Query 2D 
+
+class NumMatrix {
+public:
+    
+    vector<vector<int>> cumSum; 
+    
+    NumMatrix(vector<vector<int>>& matrix) {
+        
+        if(matrix.size()!=0 && matrix[0].size()!=0)
+        {
+            
+            cumSum = matrix; 
+            // Cumulative sum for first row and first column respectively  
+            for(int r= 0, c= 1; c < matrix[0].size(); c++) cumSum[r][c] = cumSum[r][c-1] + matrix[r][c];   
+            for(int c= 0, r= 1; r < matrix.size(); r++) cumSum[r][c] = cumSum[r-1][c] + matrix[r][c];       
+            // For the remaining matrix going row-wise 
+            for(int r = 1; r< matrix.size(); r++)
+            {
+                for(int c= 1; c< matrix[0].size(); c++)
+                {
+                    cumSum[r][c] = matrix[r][c] + cumSum[r-1][c]+ cumSum[r][c-1] - cumSum[r-1][c-1]; 
+                }
+            }
+        }
+    }
+    
+    int sumRegion(int row1, int col1, int row2, int col2) {
+        
+        int a = (row1 == 0) ? 0 : cumSum[row1 - 1][col2];
+        int b = (col1 == 0) ? 0 : cumSum[row2][col1 - 1];
+        int c = (row1 == 0 || col1 == 0) ? 0 : cumSum[row1 - 1][col1 - 1];
+        return cumSum[row2][col2] - a - b + c;
+    }
+};
+
+/**
+ * Your NumMatrix object will be instantiated and called as such:
+ * NumMatrix* obj = new NumMatrix(matrix);
+ * int param_1 = obj->sumRegion(row1,col1,row2,col2);
+ */
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// [48] Rotate image by 90 degrees (clockwise)
+
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+    
+    int N = matrix.size(); 
+    // To do it inplace, we need to use the approach of cycles 
+    for(int x = 0; x< (N/2); x++)
+    {
+        for(int y = x; y < N-x-1; y++)
+        {
+            // Storing top element 
+            int temp= matrix[y][N-1-x];
+            // Reaplce right with top 
+            matrix[y][N-1-x] = matrix[x][y];
+            // Replace top with left 
+            matrix[x][y] = matrix[N-1-y][x];
+            //Replacing left with bottom 
+            matrix[N-1-y][x]  = matrix[N-1-x][N-1-y];    
+            // Replacing bottom with right 
+            matrix[N-1-x][N-1-y] = temp;            
+        }
+    }
+        return; 
+    }
+};
+
+// [Rotate image by 90 degrees] (counter clockwise)
+void rotateMatrix(int mat[][N]) 
+{ 
+    // Consider all squares one by one 
+    for (int x = 0; x < N / 2; x++) 
+    { 
+        // Consider elements in group of 4 in  
+        // current square 
+        for (int y = x; y < N-x-1; y++) 
+        { 
+            // store current cell in temp variable 
+            int temp = mat[x][y]; 
+  
+            // move values from right to top 
+            mat[x][y] = mat[y][N-1-x]; 
+  
+            // move values from bottom to right 
+            mat[y][N-1-x] = mat[N-1-x][N-1-y]; 
+  
+            // move values from left to bottom 
+            mat[N-1-x][N-1-y] = mat[N-1-y][x]; 
+  
+            // assign temp to left 
+            mat[N-1-y][x] = temp; 
+        } 
+    } 
+} 
+
+// [Rotate image by 90 degrees): Clockwise 
+// Alternative method using transpose and flips 
+
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+    
+        for(int i=0; i< matrix.size(); i++)
+        {
+            for(int j=0; j<i; j++) swap(matrix[i][j], matrix[j][i]); 
+        }
+        
+        for(int i=0; i< matrix.size(); i++) 
+        {
+            for(int j=0, k= matrix[0].size()-1; j< k; j++, k--)
+            {
+                swap(matrix[i][j], matrix[i][k]);
+            }
+        }
+        
+        return; 
+    }
+};
+
+// [Rotate image by 90 degrees): Anticlockwise
+
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+    
+        for(int i=0; i< matrix.size(); i++)
+        {
+            for(int j=0; j<i; j++) swap(matrix[i][j], matrix[j][i]); 
+        }
+        
+        // Flipping along columns 
+        for(int c=0; c< matrix[0].size(); c++)
+        {
+            for(int j=0, k= matrix.size()-1; j<k; j++, k--) swap(matrix[j][c], matrix[k][c]); 
+        }
+        
+        return; 
+    }
+};
+
+////////////////////////////////////////////////////////////////
+// Transpose of a matrix 
+
+for(int i=0; i< matrix.size(); i++)
+{
+    for(int j=0; j<i; j++) swap(matrix[i][j], matrix[j][i]); 
+}
+
+
+
+////////////////////////////////////////////////////////////////
+//[215] Kth Largest element 
+
+class Solution {
+public:
+    
+    void printVec(vector<int>& vec)
+    {
+        for (int i: vec) cout << i << " "; 
+        cout << "" << endl; 
+        return; 
+        
+    }
+    
+    int findKthLargest(vector<int>& nums, int k) {
+        
+        partial_sort(nums.begin(), nums.begin()+ nums.size()-k+1, nums.end());        
+        // This line already consists of the extra added one required to reach our element 
+        return nums[nums.size()-k]; 
+        
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+// [1099] Two Sum Less than K 
+
+class Solution {
+public:
+    int twoSumLessThanK(vector<int>& A, int K) {
+        
+        // If answer is not changed throughout the while loop 
+        int ans = INT_MIN; 
+        // Brute approach (Sort and look for first value)
+        sort(A.begin(), A.end());
+        int i =0, j = A.size()-1; 
+        while(i < j)
+        {
+            if(A[i] + A[j] < K)
+            {
+                ans = max(ans, A[i] + A[j]); 
+                i++; 
+            }
+            
+            else j--; 
+        }
+        
+        if(ans == INT_MIN) return -1; 
+        return ans; 
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+// [167] Two Sum II - Input array is sorted 
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& numbers, int target) {
+        
+        int i =0; int j = numbers.size()-1; 
+        vector<int> ans; 
+        while(i < j)
+        {
+            int sum = numbers[i] + numbers[j]; 
+            if(sum == target) 
+            {
+                ans.push_back(i+1);
+                ans.push_back(j+1);
+                return ans; 
+            }
+            if(sum < target) i++;
+            else j--; 
+        }
+        
+        return ans; 
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////
+// [231] Power of Two 
+
+class Solution {
+public:
+    bool isPowerOfTwo(int n) {
+        
+        if( n <= 0) return false; 
+        int num = 0; 
+        for(int i = 0; i< 32; i++)
+        {
+            if( ((n & (1 << i)) >> i) == 1) num++; 
+            if(num > 1) return false; 
+        }
+        
+        return true;   
+    }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// [326] Is Power Of Three 
+
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        if(n == 1) return true;
+        else if(n % 3!=0 || n < 1) return false;
+        return (isPowerOfThree(n / 3));
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////
+// [342] Is Power Four 
+
+class Solution {
+public:
+    bool isPowerOfFour(int n) {
+        if(n == 1) return true;
+        else if(n % 4!=0 || n < 1) return false;
+        return (isPowerOfFour(n / 4));
+    }
+};        
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+// [36] Valid Sudoku 
+
+class Solution {
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+        
+        typedef pair<int,int> pi;
+        unordered_set<string> seen;
+        
+        std::string curr{board[0][0]};
+        
+        for(int r = 0; r< board.size(); r++)
+        {
+            for(int c=0; c< board[0].size(); c++)
+            {
+                if(board[r][c]== '.') continue; 
+                curr = board[r][c]; 
+                string s1 = "Found: " + curr + " At row: " +  to_string(r); 
+                string s2 = "Found: " + curr + " At column: " +  to_string(c);  
+                string s3 = "Found: " + curr + " At box: " +  to_string(r/3) + "." + to_string(c/3);
+                if(seen.find(s1)!= seen.end() || seen.find(s2)!= seen.end() || seen.find(s3)!= seen.end()) return false;
+                else 
+                {
+                    seen.insert(s1);
+                    seen.insert(s2);
+                    seen.insert(s3); 
+                }
+            }
+        }
+        
+        return true; 
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// [657] Robot returns to origin 
+
+class Solution {
+public:
+    bool judgeCircle(string moves) {
+        int horz = 0; 
+        int vert = 0; 
+        
+        if(moves.length()== 0) return true; 
+        
+        // Loop through all the strings 
+        for(int i=0; i< moves.length(); i++)
+        {
+            if(moves[i] == 'L') horz--; 
+            else if(moves[i] == 'R') horz++; 
+            else if(moves[i] == 'U') vert++; 
+            else if(moves[i] == 'D') vert--;
+        }
+        
+        if(vert == 0 && horz == 0) return true; 
+        
+        return false; 
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// [204] Count primes 
+
+    int countPrimes(int n) {
+        vector<bool> prime(n+1, true);
+        int numPrimes = 0; 
+        // Check for all numbers less than sqrt(n)
+        for(int i= 2; i*i<= n; i++)
+        {
+            if(prime[i])
+            {
+                // Check for squares of i as i as numbers before that has already been checked
+                for(int k= i*i; k <=n; k+= i) 
+                {
+                    prime[k] = false;
+                }
+            }    
+        }
+        
+        for(int i = 2; i< n; i++)
+        {
+            if(prime[i]) numPrimes++;
+        }
+    
+        return numPrimes;
+    }

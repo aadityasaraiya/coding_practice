@@ -1166,3 +1166,342 @@ public:
     return false; 
     }
 };
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// [863] All Nodes Distance K in Binary Tree 
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+        
+    // Traverse tree using preorder traversal 
+    void traverseSubTree(TreeNode* root, int prev_val, unordered_map<int, vector<int>> & um1)
+    {
+        // Base case 
+        if(!root) return;        
+        // Update current roots val with the value of its parent 
+        vector<int> temp; 
+        temp.push_back(prev_val);
+        um1.insert({root->val, temp});
+        // Push the current value to previous as well. 
+        um1[prev_val].push_back(root->val);
+        
+        // Update the previous value 
+        prev_val = root->val; 
+        traverseSubTree(root->left, prev_val, um1);
+        traverseSubTree(root->right, prev_val, um1);
+        return; 
+    }
+    
+    
+    // Helper 
+    void helper(unordered_map<int, vector<int>>um, unordered_set<int>&s, vector<int>& ans, int target, int k_val)
+    {
+
+        if(k_val == 0)
+        {
+            ans.push_back(target); 
+            return; 
+        }
+        
+        // Add target to the set 
+        s.insert(target); 
+        // Find target in the map 
+        auto it= um.find(target);
+        // Loop through the vector 
+        for(auto node: it->second)
+        {
+            if(s.find(node)!= s.end()) continue;
+            else helper(um, s, ans, node, k_val-1); 
+        }
+    
+        return; 
+    }
+    
+    
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int K) {
+        
+        // Null case 
+        vector<int> ans; 
+        if(!root) return ans;
+        vector<int> temp; 
+        // Unordered map of root and all nodes connected to the root  
+        unordered_map<int, vector<int>> um1;
+        unordered_set<int> s;
+        // Insert root with an empty vector in the map 
+        um1.insert({root->val, temp}); 
+        //s.insert(root->val); 
+        // Traverse left subtree with root->left and previous value 
+        traverseSubTree(root->left, root->val, um1);
+        traverseSubTree(root->right, root->val, um1); 
+        helper(um1, s, ans, target->val, K);
+        
+        return ans; 
+        
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// [1197] Minimum Knight Moves  (TLE) 
+
+class Solution {
+public:
+    
+struct pair_hash
+{
+	template <class T1, class T2>
+	std::size_t operator () (std::pair<T1, T2> const &pair) const
+	{
+		std::size_t h1 = std::hash<T1>()(pair.first);
+		std::size_t h2 = std::hash<T2>()(pair.second);
+		return h1 ^ h2;
+	}
+};
+    
+    int minKnightMoves(int x, int y) {
+         
+        // Queue to store next possible values 
+        queue<pair<int,int>> q; 
+        // Visited array checks 
+        unordered_set<pair<int,int>, pair_hash> s; 
+        
+        // Adding levels 
+        //queue<int> level; 
+        q.push(make_pair(0,0));
+        // Signfies end of level 
+        pair<int,int> lvl_change {INT_MIN, INT_MAX}; 
+        q.push(lvl_change);
+        // We are only searching in the first quadrant 
+        int targetX = abs(x);  int targetY = abs(y); 
+        int levels = 0; 
+        
+        while(!q.empty())
+        {
+            auto p_temp = q.front();
+            q.pop(); 
+                        
+            // Check if we are at the end of level 
+            if(p_temp.first == INT_MIN && p_temp.second == INT_MAX)
+            {
+                // If this was the last element 
+                if(q.empty()) continue;
+                else
+                {
+                    levels++;
+                    q.push(lvl_change); 
+                    continue; 
+                }
+            }
+            // Check if we have reached target 
+            if(p_temp.first == targetX && p_temp.second == targetY) return levels; 
+            
+            // Check if we have already visited this node before 
+            if(s.find(p_temp)!= s.end()) continue; 
+            // Push the current node in visited
+            s.insert(make_pair(p_temp.first, p_temp.second)); 
+            // Push both the combinations in the queue 
+            // Quadrant 1 
+            q.push(make_pair(abs(p_temp.first + 2), abs(p_temp.second + 1)));
+            q.push(make_pair(abs(p_temp.first + 1), abs(p_temp.second + 2)));
+            // Quadrant 2 
+            q.push(make_pair(abs(p_temp.first - 1), abs(p_temp.second + 2)));
+            q.push(make_pair(abs(p_temp.first - 2), abs(p_temp.second + 1)));
+            // Quadrant 3 
+            q.push(make_pair(abs(p_temp.first - 1), abs(p_temp.second - 2)));
+            q.push(make_pair(abs(p_temp.first - 2), abs(p_temp.second - 1)));
+            // Quadrant 4 
+            q.push(make_pair(abs(p_temp.first + 2), abs(p_temp.second - 1)));
+            q.push(make_pair(abs(p_temp.first + 1), abs(p_temp.second - 2)));
+
+        }
+        
+        return levels; 
+    
+    }
+};
+
+// [1197] Minimum Knight moves (Optimal solution 1)
+
+class Solution {
+public:
+    int minKnightMoves(int x, int y) {
+        // Base case 
+        if (x==0 && y==0) return 0;
+        // Because of the symmetric nature of the problem, we can just use the absolute values 
+        int absx = abs(x); int absy = abs(y);
+        // (1,2) and (2,1) need just one move 
+        if ((absx == 1 && absy == 2) || (absx == 2 && absy == 1)) return 1;
+        if (absx <=2 && absy <= 2) {
+            // Use the negative side and then get to the location 
+            if (absx == 1 && absy == 1) return 2;
+            // We the difference between x and y is 1, we only need 3 moves 
+            if (abs(absx-absy) == 1) return 3;
+        }
+        int diffX = 1, diffY = 1, diffX2 = 1, diffY2 = 1;
+        
+        // If x is greater than y, we keep more difference in diffX (trial 1)
+        if (absx > absy) {
+            diffX = 2;
+            diffY2 = 2;
+        }
+        // Else If x is smaller than y, we keep more difference in diffY (trial 2)
+        else {
+            diffY = 2;
+            diffX2 = 2;
+        }
+        // If x is negative (we will need to subtract -ve numbers (aka add values) to get it to 0 )
+        if (absx != x) {
+            diffX = -diffX;
+            diffX2 = -diffX2;
+        }
+        // If y is negative (we will need to subtract -ve numbers (aka add values) to get it to 0 )
+        if (absy != y) {
+            diffY = -diffY;
+            diffY2 = -diffY2;
+        }
+        
+        // Reduce the problem to a 5 x 5 by just doing this standard approach. 
+        if (absx > 5 || absy > 5) // Come close fast
+            return 1+minKnightMoves(x-diffX, y-diffY);
+        // After that, it will matter what kind of moves we take, (1,2) or (2,1)
+        else
+            return 1+min(minKnightMoves(x-diffX, y-diffY), minKnightMoves(x-diffX2, y-diffY2));
+    }
+};
+
+
+
+// [1197] Minimum Knight moves (Solution 3: Using A* algorithm)
+
+class Solution {
+public:
+    
+    struct pair_hash
+    {
+        template <class T1, class T2>
+        std::size_t operator () (std::pair<T1, T2> const &pair) const
+        {
+            std::size_t h1 = std::hash<T1>()(pair.first);
+            std::size_t h2 = std::hash<T2>()(pair.second);
+            return h1 ^ h2;
+        }
+    };
+    
+    class CNode
+    {
+        public:
+            int x = 0, y = 0, numMoves = 0;
+
+            CNode(int xLoc, int yLoc, int moves)
+            {
+                x = xLoc;    y= yLoc;   numMoves = moves; 
+            }
+    };
+    
+
+    int minKnightMoves(int x, int y) {
+        typedef pair<int, CNode*> pi; 
+        
+        // Symmetric problem, so only limiting to first quadrant 
+        x = abs(x) ;  y = abs(y); 
+        
+        // Initialze the origin  
+        CNode* origin = new CNode(0,0,0); 
+        
+        // Initialize priority queue  Cost vs Struct 
+        priority_queue<pi, vector<pi>, greater<pi> > pq;
+        // Insert origin into priority queue 
+        pq.push(make_pair(INT_MIN, origin));
+        // Action space 
+        vector<pair<int,int>> acts{{1,2}, {2,1}, {1,-2}, {2,-1}, {-1,-2}, {-2,-1}, {-1,2}, {-2,1}};
+        // Visited  Key: Location 
+        unordered_set<pair<int,int>, pair_hash> visited; 
+        visited.insert(make_pair(0,0)); 
+        
+        // Create BFS like loop 
+        while(!pq.empty())
+        {
+            // Extract top element of pq
+            auto p = pq.top();     pq.pop(); 
+            // Extract move number 
+            int move = p.second-> numMoves;
+            
+            // Check if we have already met our condition 
+            if(p.second->x == x && p.second->y == y) return move; 
+            
+
+            // Loop through the whole action space 
+            for(auto act: acts)
+            {
+                int newX = abs(p.second->x + act.first);    int newY = abs(p.second->y + act.second); 
+                // If we have already visited this particular node 
+                if(visited.find(make_pair(newX, newY))!= visited.end()) continue;
+                else
+                {
+                    int cost = move+ ((abs(newX- x) + abs(newY - y)) /3 );
+                    CNode* newNode = new CNode(newX, newY, move + 1); 
+                    pq.push(make_pair(cost, newNode)); 
+                    // Insert current node into visited 
+                    visited.insert(make_pair(newX, newY)); 
+                }
+            }
+        }
+        
+        return -1; 
+    }
+};
+
+//////////////////////////////////////////////////////////////////
+// [701] Insert into a BST 
+
+class Solution {
+public:
+    
+    bool done = false; 
+    
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        
+        if(done) return root; 
+        
+        if(root == NULL) 
+        {
+            TreeNode* node = new TreeNode(val); 
+            return node; 
+        }
+        
+        // Conditional checks 
+        if(val > root->val)
+        {
+            // Go right
+            auto ans1 = insertIntoBST(root->right, val);
+            if(!done)
+            {
+                root->right = ans1;
+                done = true;                 
+            }
+        }
+        
+        else if (val < root->val)
+        {
+            // Go left 
+            auto ans2 = insertIntoBST(root->left, val); 
+            if(!done)
+            {
+                root->left = ans2;
+                done = true;                
+            }
+        }
+        return root; 
+    }
+};
+
+//////////////////////////////////////////////////////////////////
